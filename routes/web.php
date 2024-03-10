@@ -10,7 +10,9 @@ use App\Http\Controllers\Backend\BrandController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\SubCategoryController;
 use App\Http\Controllers\Backend\ProductController;
-/*
+use App\Http\Controllers\Backend\SliderController;
+use App\Http\Controllers\Frontend\LanguageController;
+/*u
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
@@ -27,6 +29,8 @@ Route::group(['prefix'=> 'admin', 'middleware'=>['admin:admin']], function(){
 	Route::post('/login',[AdminController::class, 'store'])->name('admin.login');
 });
 
+
+Route::middleware(['auth:admin'])->group(function(){
 
 
 
@@ -50,7 +54,7 @@ Route::get('/admin/change/password',[AdminProfileController::class,'AdminChangeP
 Route::post('/admin/profile/store',[AdminProfileController::class,'AdminProfileStore'])->name('admin.profile.store');
 
 Route::post('/update/change/password',[AdminProfileController::class,'UpdatePass'])->name('update.change.password');
-
+});
 // user related routes
 
 
@@ -129,3 +133,25 @@ Route::prefix('product')->group(function(){
     Route::get('/delete/{id}', [ProductController::class, 'ProductDelete'])->name('product.delete');
 
 });
+
+// admin slider all routes 
+Route::prefix('slider')->group(function(){
+    Route::get('/view',[SliderController::class,'SliderView'])->name('manage-slider');
+    Route::post('/store',[SliderController::class,'SliderStore'])->name('slider.store');
+    Route::get('/edit/{id}',[SliderController::class,'SliderEdit'])->name('slider.edit');
+    Route::post('/update',[SliderController::class,'SliderUpdate'])->name('slider.update');
+    Route::get('/delete/{id}',[SliderController::class,'SliderDelete'])->name('slider.delete');
+    Route::get('/inactive/{id}', [SliderController::class, 'SliderInactive'])->name('slider.inactive');
+
+    Route::get('/active/{id}', [SliderController::class, 'SliderActive'])->name('slider.active');
+
+});
+
+//frontend all routes
+//multi-lang routes
+Route::get('/language/bosnian', [LanguageController::class, 'Bosnian'])->name('bosnian.language');
+
+Route::get('/language/english', [LanguageController::class, 'English'])->name('english.language');
+//product details page url
+
+Route::get('/product/details/{id}/{slug}', [IndexController::class, 'ProductDetails']);

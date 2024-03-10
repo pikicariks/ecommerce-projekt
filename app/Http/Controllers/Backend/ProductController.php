@@ -12,7 +12,7 @@ use App\Models\MultiImg;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Intervention\Image\Image;
+use Intervention\Image\Facades\Image;
 
 class ProductController extends Controller
 {
@@ -28,7 +28,7 @@ class ProductController extends Controller
 
         $image = $req->file('product_thumbnail');
         $namegenerate = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
-
+        Image::make($image)->resize(917,1000)->save('upload/product/thumbnail/'.$namegenerate);
         $save = 'upload/product/thumbnail/'.$namegenerate;
         $product_id = Product::insertGetId([
             'brand_id' => $req->brand_id,
@@ -67,7 +67,7 @@ class ProductController extends Controller
         $images = $req->file('multi_img');
         foreach ($images as $img) {
         $name = hexdec(uniqid()).'.'.$img->getClientOriginalExtension();
-
+        Image::make($img)->resize(917,1000)->save('upload/product/multi-image/'.$name);
         $upload = 'upload/product/multi-image/'.$name;
         MultiImg::insert([
             'product_id'=> $product_id,
@@ -213,18 +213,18 @@ class ProductController extends Controller
 
         public function ProductDelete($id){
             $product = Product::findOrFail($id);
-            unlink($product->product_thumbnail);
+            // unlink($product->product_thumbnail);
             Product::findOrFail($id)->delete();
    
             $images = MultiImg::where('product_id',$id)->get();
             foreach ($images as $img) {
-                unlink($img->photo_name);
+                // unlink($img->photo_name);
                 MultiImg::where('product_id',$id)->delete();
             }
    
             
    
-           return redirect()->back();
+           return redirect()->route('manage-product');
    
         }
 }

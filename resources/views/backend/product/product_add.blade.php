@@ -380,7 +380,7 @@
 						</div>
 						
 						<div class="text-xs-right">
-							<button type="submit" class="btn btn-rounded btn-primary mb-5">Add</button>
+							<button type="submit" btn btn-rounded btn-primary mb-5">Add</button>
 						</div>
 					</form>
 
@@ -486,4 +486,6 @@
    });
   });
 	  </script>
+
+	  
 @endsection

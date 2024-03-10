@@ -39,8 +39,8 @@ $(function () {
 		colors:['#00BC8B', '#caffe5'],
         };
 
-        var chart = new ApexCharts(document.querySelector("#chart41"), options);
-        chart.render();
+        // var chart = new ApexCharts(document.querySelector("#chart41"), options);
+        // chart.render();
 	
 	
 		
@@ -74,8 +74,7 @@ $(function () {
 		colors:['#0F5EF7', '#e1f0ff'],
         };
 
-        var chart = new ApexCharts(document.querySelector("#chart42"), options);
-        chart.render();
+       
 	
 	
 	
@@ -165,8 +164,7 @@ $(function () {
         
         },
       };
-      var chart = new ApexCharts(document.querySelector("#charts_widget_43_chart"), options);
-      chart.render();
+    
 	
 	
 	
@@ -225,8 +223,7 @@ $(function () {
         },
         };
 
-        var chart = new ApexCharts(document.querySelector("#revenue1"), options);
-        chart.render();
+       
 	
 	
 	
@@ -287,9 +284,7 @@ $(function () {
         },
         };
 
-        var chart = new ApexCharts(document.querySelector("#revenue2"), options);
-        chart.render();
-	
+      
 	
 
 	
@@ -355,8 +350,7 @@ $(function () {
         }
         };
 
-        var chart = new ApexCharts(document.querySelector("#recent_trend"), options);
-        chart.render();
+        
 	
 	
 	
