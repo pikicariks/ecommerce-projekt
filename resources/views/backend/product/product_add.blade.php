@@ -368,7 +368,7 @@
 									<div class="controls">
 										<fieldset>
 											<input type="checkbox" id="checkbox_4" name="special_offer"  value="1">
-											<label for="checkbox_5">Special offer</label>
+											<label for="checkbox_4">Special offer</label>
 										</fieldset>
 										<fieldset>
 											<input type="checkbox" id="checkbox_5" name="special_deals" value="1">

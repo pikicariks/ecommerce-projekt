@@ -258,7 +258,7 @@
 							<div class="form-group">
 								<h5>Discount price<span class="text-danger">*</span></h5>
 								<div class="controls">
-									<input type="text" name="discount_price" class="form-control" required data-validation-required-message="This field is required" value="{{$product->discount_price}}"> </div>
+									<input type="text" name="discount_price" class="form-control"  value="{{$product->discount_price}}"> </div>
 									@error('discount_price')
             <span class="text-danger">{{$message}}</span>
         @enderror
@@ -353,7 +353,7 @@
 									<div class="controls">
 										<fieldset>
 											<input type="checkbox" id="checkbox_4" name="special_offer"  value="1" {{$product->special_offer == 1 ? 'checked':''}}>
-											<label for="checkbox_5">Special offer</label>
+											<label for="checkbox_4">Special offer</label>
 										</fieldset>
 										<fieldset>
 											<input type="checkbox" id="checkbox_5" name="special_deals" value="1" {{$product->special_deals == 1 ? 'checked':''}}>

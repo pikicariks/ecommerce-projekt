@@ -155,3 +155,11 @@ Route::get('/language/english', [LanguageController::class, 'English'])->name('e
 //product details page url
 
 Route::get('/product/details/{id}/{slug}', [IndexController::class, 'ProductDetails']);
+
+//product tag url
+Route::get('/product/tag/{tag}', [IndexController::class, 'TagWiseProduct']);
+
+//subcategory wise data
+Route::get('/subcategory/product/{subcat_id}/{slug}', [IndexController::class, 'SubCatData']);
+
+Route::get('/subsubcategory/product/{ssubcat_id}/{slug}', [IndexController::class, 'SubSubCatData']);
