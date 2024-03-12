@@ -5,6 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="">
+<meta name="csrf-token" content="{{csrf_token()}}">
 <meta name="author" content="">
 <meta name="keywords" content="MediaCenter, Template, eCommerce">
 <meta name="robots" content="all">
@@ -59,5 +60,414 @@
 <script src="{{asset('frontend/assets/js/bootstrap-select.min.js')}}"></script> 
 <script src="{{asset('frontend/assets/js/wow.min.js')}}"></script> 
 <script src="{{asset('frontend/assets/js/scripts.js')}}"></script>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"> <span id="pname"></span></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeModal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+
+            <div class="col-md-4">
+                <div class="card" style="width: 18rem;">
+                <img src="" class="card-img-top" alt="..." style="height: 200px; width: 180px;" id="pimage">                    
+                </div>
+
+            </div>
+            <div class="col-md-4">
+                <ul class="list-group">
+                <li class="list-group-item">Product Price: <strong class="text-danger">$<span id="pprice"></span></strong> 
+                <del id="oldprice">$</del>
+              </li>
+  <li class="list-group-item">Product Code: <strong id="pcode"></strong></li>
+  <li class="list-group-item">Category: <strong id="pcategory"></strong></li>
+  <li class="list-group-item">Brand: <strong id="pbrand"></strong></li>
+                    <li class="list-group-item">Stock: <span class="badge badge-pill badge-success" id="available" style="background: green; color:white;"></span>
+                    <span class="badge badge-pill badge-danger" id="stockout" style="background: orange; color:white;"></span>
+                  </li>
+                </ul>
+
+
+            </div>
+            <div class="col-md-4">
+
+                <div class="form-group">
+                     <label for="exampleFormControlSelect1">Choose color</label>
+                     <select class="form-control" id="exampleFormControlSelect1" name="color" id="color">
+                       
+                       
+                    </select>
+                </div>
+            
+                <div class="form-group" id="sizearea">
+                     <label for="exampleFormControlSelect1">Choose size</label>
+                     <select class="form-control" id="exampleFormControlSelect1" name="size" id="size">
+                       
+                       
+                    </select>
+                </div>
+
+                <div class="form-group">
+                     <label for="exampleFormControlSelect1">Quantity</label>
+                    <input type="number" value="1" min="1" id="qty">
+                </div>
+
+<input type="hidden" id="product_id">
+                <button type="submit" onclick="addToCart()" class="btn btn-primary mb-2">Add to Cart</button>
+
+            </div>
+        </div>
+
+
+
+
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+    $.ajaxSetup({
+        headers:{
+            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+        }
+    })
+
+    function productView(id){
+      $.ajax({
+        type:'GET',
+        url:'/product/view/modal/'+id,
+        dataType:'json',
+        success:function(data){
+            $('#pname').text(data.product.product_name_en);
+            $('#price').text(data.product.selling_price);
+            $('#pcode').text(data.product.product_code);
+            $('#pcategory').text(data.product.category.category_name_en);
+            $('#pbrand').text(data.product.brand.brand_name_en);
+            $('#pimage').attr('src','/'+data.product.product_thumbnail);
+            $('#product_id').val(id);
+            $('#qty').val(1);
+
+
+            if (data.product.discount_price == null) {
+              $('#pprice').text('');
+              $('#oldprice').text('');
+              $('#pprice').text(data.product.selling_price);
+            } else {
+              $('#pprice').text(data.product.discount_price);
+              $('#oldprice').text(data.product.selling_price);
+            }
+
+            if (data.product.product_qty > 0) {
+              $('#available').text('');
+              $('#stockout').text('');
+              $('#available').text('available');
+            } else {
+              $('#available').text('');
+              $('#stockout').text('');
+              $('#stockout').text('unavailable');
+            }
+
+            $('select[name="color"]').empty();
+            $.each(data.color,function(key,value){
+                $('select[name="color"]').append(' <option value="'+value+'">'+value+'  </option>');
+            });
+            $('select[name="size"]').empty();
+            $.each(data.size,function(key,value){
+                $('select[name="size"]').append(' <option value="'+value+'">'+value+'  </option>');
+                
+                if (data.size =="") {
+                  $('#sizearea').hide();
+                } else {
+                  $('#sizearea').show();
+                }
+            });
+        }
+       
+      })
+    }
+//
+
+// add to cart 
+
+function addToCart(){
+  var product_name = $('#pname').text();
+  var id = $('#product_id').val();
+
+  var color = $('#color option:selected').text();
+  var size = $('#size option:selected').text();
+
+  var qty = $('#qty').val();
+  $.ajax({
+    type:"POST",
+    dataType:'json',
+    data:{
+      color:color,
+      size:size,
+      quantity:qty,
+      product_name:product_name,
+    },
+    url:"/cart/data/store/"+id,
+    success:function(data){
+      miniCart();
+      $('#closeModal').click();
+      
+    }
+  });
+}
+
+</script>
+
+<script type="text/javascript">
+
+  function miniCart(){
+    $.ajax({
+      type:'GET',
+      url:'/product/mini/cart',
+      dataType:'json',
+      success:function(res){
+        var miniCart = "";
+        $('span[id="cartSub"]').text(res.cartTotal);
+        $('#cartQty').text(res.cartQty);
+
+        $.each(res.carts,function(key,val){
+          miniCart += ` <div class="cart-item product-summary">
+                  <div class="row">
+                    <div class="col-xs-4">
+                      <div class="image"> <a href="detail.html"><img src="/${val.options.image}" alt=""></a> </div>
+                    </div>
+                    <div class="col-xs-7">
+                      <h3 class="name"><a href="index.php?page-detail">${val.name}</a></h3>
+                      <div class="price">$ ${val.price} * ${val.qty} </div>
+                    </div>
+                    <div class="col-xs-1 action"> <button type="submit" id="${val.rowId}" onclick="miniCartRemove(this.id)"><i class="fa fa-trash"></i></button> </div>
+                  </div>
+                </div>
+                <!-- /.cart-item -->
+                <div class="clearfix"></div>
+                <hr>`;
+        });
+        $('#miniCart').html(miniCart);
+      }
+    });
+
+  }
+
+  miniCart();
+</script>
+
+<script type="text/javascript">
+
+  function miniCartRemove(id){
+
+    $.ajax({
+      type:'GET',
+      url:'/minicart/product-remove/'+id,
+      dataType:'json',
+      success:function(data){
+        miniCart();
+      }
+    })
+  }
+</script>
+
+<script type="text/javascript">
+
+  function addToWish(id){
+
+    $.ajax({
+      type:'POST',
+      url:'/add-to-wishlist/'+id,
+      dataType:'json',
+      
+      success:function(data){
+        
+      }
+    })
+  }
+</script>
+
+
+<script type="text/javascript">
+
+  function wishlist(){
+    $.ajax({
+      type:'GET',
+      url:'/user/get-wishlist-product',
+      dataType:'json',
+      success:function(res){
+        var rows = "";
+        
+
+        $.each(res,function(key,val){
+          rows += ` <tr>
+					<td class="col-md-2"><img src="/${val.product.product_thumbnail}" alt="imga"></td>
+					<td class="col-md-7">
+						<div class="product-name"><a href="#">${val.product.product_name_en}</a></div>
+						
+						<div class="price">
+            ${val.product.discount_price == null
+            ?`${val.product.selling_price}`
+            :`${val.product.discount_price} <span>${val.product.selling_price}</span>`
+            }
+							
+						</div>
+					</td>
+					<td class="col-md-2">
+          <button class="btn btn-primary icon" type="button" id="${val.product_id}" onclick="addToWish(this.id)" title="Add Cart"> <i class="fa fa-heart"></i>Add to Cart </button>
+					</td>
+					<td class="col-md-1 close-btn">
+						<button type="submit" class="" id="${val.id}" onclick="wishRemove(this.id)"><i class="fa fa-times"></i></button>
+					</td>
+				</tr>`;
+        });
+        $('#wishlist').html(rows);
+      }
+    });
+
+  }
+  wishlist();
+  
+</script>
+
+<script type="text/javascript">
+
+  function wishRemove(id){
+
+    $.ajax({
+      type:'GET',
+      url:'/user/wishlist-remove/'+id,
+      dataType:'json',
+      success:function(data){
+        wishlist();
+        
+      }
+    })
+  }
+</script>
+
+
+<script type="text/javascript">
+
+  function cart(){
+    $.ajax({
+      type:'GET',
+      url:'/get-mycart',
+      dataType:'json',
+      success:function(res){
+        var rows = "";
+        
+
+        $.each(res.carts,function(key,val){
+          rows += ` <tr>
+					<td class="col-md-1"><img src="/${val.options.image}" alt="imga" style="width:60px;height:60px;"></td>
+					<td class="col-md-1">
+						<div class="product-name"><a href="#">${val.name}</a></div>
+						
+						<div class="price">
+           
+           ${val.price}
+							
+						</div>
+					</td>
+
+          <td class="col-md-1">
+            <strong>${val.options.color}</strong>
+          </td>
+
+          <td class="col-md-1">
+          ${val.options.size == null 
+          ? `<span>...</span>`
+          : `<strong>${val.options.size}</strong>`
+          }
+           
+          </td>
+
+          <td class="col-md-1">
+
+          ${val.qty > 1
+            ? `<button type="submit" class="btn btn-danger btn-sm" id="${val.rowId}" onclick="decrement(this.id)" >-</button> `
+            : `<button type="submit" class="btn btn-danger btn-sm" disabled >-</button> `
+            }
+				<input type="text" value="${val.qty}" min="1" max="100" disabled style="width:25px;">
+        <button type="submit" class="btn btn-success btn-sm" id="${val.rowId}" onclick="increment(this.id)">+</button>
+
+          </td>
+
+          <td class="col-md-1">
+            <strong>$${val.subtotal}</strong>
+          </td>
+					
+					<td class="col-md-1 close-btn">
+						<button type="submit" class="" id="${val.rowId}" onclick="remove(this.id)"><i class="fa fa-times"></i></button>
+					</td>
+				</tr>`;
+        });
+        $('#cart').html(rows);
+      }
+    });
+
+  }
+  cart();
+  
+
+
+</script>
+
+<script type="text/javascript">
+
+  function remove(id){
+
+    $.ajax({
+      type:'GET',
+      url:'/cart-remove/'+id,
+      dataType:'json',
+      success:function(data){
+        cart();
+        miniCart();
+        
+      }
+    })
+  }
+
+  function increment(id){
+
+$.ajax({
+  type:'GET',
+  url:'/cart-increment/'+id,
+  dataType:'json',
+  success:function(data){
+    cart();
+    miniCart();
+    
+  }
+})
+}
+
+
+function decrement(id){
+
+$.ajax({
+  type:'GET',
+  url:'/cart-decrement/'+id,
+  dataType:'json',
+  success:function(data){
+    cart();
+    miniCart();
+    
+  }
+})
+}
+</script>
+
+
 </body>
 </html>

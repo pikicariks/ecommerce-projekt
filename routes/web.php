@@ -12,6 +12,9 @@ use App\Http\Controllers\Backend\SubCategoryController;
 use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\Backend\SliderController;
 use App\Http\Controllers\Frontend\LanguageController;
+use App\Http\Controllers\Frontend\CartController;
+use App\Http\Controllers\User\WishlistController;
+use App\Http\Controllers\User\CartPageController;
 /*u
 |--------------------------------------------------------------------------
 | Web Routes
@@ -163,3 +166,40 @@ Route::get('/product/tag/{tag}', [IndexController::class, 'TagWiseProduct']);
 Route::get('/subcategory/product/{subcat_id}/{slug}', [IndexController::class, 'SubCatData']);
 
 Route::get('/subsubcategory/product/{ssubcat_id}/{slug}', [IndexController::class, 'SubSubCatData']);
+
+
+Route::get('/product/view/modal/{id}', [IndexController::class, 'ProductViewAjax']);
+
+Route::post('/cart/data/store/{id}', [CartController::class, 'CartStoreProduct']);
+
+Route::get('/product/mini/cart', [CartController::class, 'MiniCartAdd']);
+
+Route::get('/minicart/product-remove/{id}', [CartController::class, 'MiniCartRemove']);
+
+
+////////
+
+Route::post('/add-to-wishlist/{id}', [CartController::class, 'AddToWish']);
+
+
+Route::group(['prefix'=>'user','middleware' => ['user','auth'],'namespace'=>'User'],function(){
+
+Route::get('/wishlist', [WishlistController::class, 'WishlistView'])->name('wishlist');
+
+
+Route::get('/get-wishlist-product', [WishlistController::class, 'GetProdWish']);
+
+Route::get('/wishlist-remove/{id}', [WishlistController::class, 'WishRemoveProd']);
+
+
+});
+
+Route::get('/cart', [CartPageController::class, 'MyCart'])->name('cart');
+
+Route::get('/get-mycart', [CartPageController::class, 'GetCartProducts']);
+
+Route::get('/cart-remove/{id}', [CartPageController::class, 'RemoveCartProduct']);
+
+Route::get('/cart-increment/{id}', [CartPageController::class, 'Increment']);
+
+Route::get('/cart-decrement/{id}', [CartPageController::class, 'Decrement']);
