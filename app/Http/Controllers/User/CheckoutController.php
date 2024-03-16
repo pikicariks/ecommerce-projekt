@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ShipDistrict;
 use App\Models\ShipState;
 use Illuminate\Http\Request;
+use Gloudemans\Shoppingcart\Facades\Cart;
 
 class CheckoutController extends Controller
 {
@@ -34,10 +35,12 @@ class CheckoutController extends Controller
         $data['state_id'] = $req->state_id;
         $data['notes'] = $req->notes;
 
-        if ($req->payment_method == 'Stripe') {
-            return view('frontend.payment.stripe',compact('data'));
+        $cartTotal = Cart::total();
+
+        if ($req->payment_method == 'stripe') {
+            return view('frontend.payment.stripe',compact('data','cartTotal'));
         }
-        elseif ($req->payment_method == 'Card') {
+        elseif ($req->payment_method == 'card') {
             return 'card';
 
         }

@@ -18,6 +18,7 @@ use App\Http\Controllers\User\CartPageController;
 use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\ShippingAreaController;
 use App\Http\Controllers\User\CheckoutController;
+use App\Http\Controllers\User\StripeController;
 
 /*u
 |--------------------------------------------------------------------------
@@ -195,6 +196,9 @@ Route::get('/get-wishlist-product', [WishlistController::class, 'GetProdWish']);
 
 Route::get('/wishlist-remove/{id}', [WishlistController::class, 'WishRemoveProd']);
 
+Route::post('/stripe/order',[StripeController::class,'StripeOrder'])->name('stripe.order');
+
+
 
 });
 
@@ -267,3 +271,4 @@ Route::get('/state-get/ajax/{district_id}',[CheckoutController::class,'GetState'
 
 
 Route::post('/checkout/store',[CheckoutController::class,'CheckoutStore'])->name('checkout.store');
+

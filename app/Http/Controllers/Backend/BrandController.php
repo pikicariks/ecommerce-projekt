@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Brand;
-use Intervention\Image\ImageManagerStatic as Image;
+use Intervention\Image\Facades\Image;
 
 
 class BrandController extends Controller
@@ -24,11 +24,12 @@ class BrandController extends Controller
             'brand_image'=>'required',
         ],[
             'brand_name_en.required'=>'Input Brand Name in English',
-            'brand_name_hin.required'=>'Input Brand Name in Hindi',
+            'brand_name_hin.required'=>'Input Brand Name in Bosnian',
         ]);
 
         $image = $req->file('brand_image');
         $namegenerate = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
+        Image::make($image)->resize(300,300)->save('upload/brand/'.$namegenerate);
 
         $save = 'upload/brand/'.$namegenerate;
 
@@ -57,7 +58,8 @@ class BrandController extends Controller
             unlink($old_img);
             $image = $req->file('brand_image');
             $namegenerate = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
-    
+            Image::make($image)->resize(300,300)->save('upload/brand/'.$namegenerate);
+
             $save = 'upload/brand/'.$namegenerate;
     
             Brand::findOrFail($brand_id)->update([
