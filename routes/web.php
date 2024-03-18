@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Backend\AdminProfileController;
+use App\Http\Controllers\Backend\BlogController;
 use App\Http\Controllers\Frontend\IndexController;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -16,9 +17,15 @@ use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\User\WishlistController;
 use App\Http\Controllers\User\CartPageController;
 use App\Http\Controllers\Backend\CouponController;
+use App\Http\Controllers\Backend\OrderController;
+use App\Http\Controllers\Backend\ReportController;
 use App\Http\Controllers\Backend\ShippingAreaController;
 use App\Http\Controllers\User\CheckoutController;
 use App\Http\Controllers\User\StripeController;
+use App\Http\Controllers\User\AllUserController;
+use App\Http\Controllers\User\CashController;
+use App\Http\Controllers\Frontend\HomeBlogController;
+use App\Http\Controllers\Backend\SiteSetting as SiteSettingController;
 
 /*u
 |--------------------------------------------------------------------------
@@ -198,6 +205,13 @@ Route::get('/wishlist-remove/{id}', [WishlistController::class, 'WishRemoveProd'
 
 Route::post('/stripe/order',[StripeController::class,'StripeOrder'])->name('stripe.order');
 
+Route::post('/cash/order',[CashController::class,'CashOrder'])->name('cash.order');
+
+Route::get('/my/orders', [AllUserController::class, 'GetOrders'])->name('my.orders');
+
+Route::get('/order_details/{id}', [AllUserController::class, 'OrderDetails']);
+
+Route::get('/invoice_download/{id}', [AllUserController::class, 'InvoiceDownload']);
 
 
 });
@@ -272,3 +286,99 @@ Route::get('/state-get/ajax/{district_id}',[CheckoutController::class,'GetState'
 
 Route::post('/checkout/store',[CheckoutController::class,'CheckoutStore'])->name('checkout.store');
 
+////// admin order routes
+Route::prefix('orders')->group(function(){
+    Route::get('/pending/orders',[OrderController::class,'PendingOrders'])->name('pending-orders');
+    Route::get('/pending/orders/details/{order_id}', [OrderController::class, 'PendingOrdersDetails'])->name('pending.order.details');
+    Route::get('/confirmed/orders',[OrderController::class,'ConfirmedOrders'])->name('confirmed-orders');
+    Route::get('/processing/orders', [OrderController::class, 'ProcessingOrders'])->name('processing-orders');
+
+    Route::get('/picked/orders', [OrderController::class, 'PickedOrders'])->name('picked-orders');
+    
+    Route::get('/shipped/orders', [OrderController::class, 'ShippedOrders'])->name('shipped-orders');
+    
+    Route::get('/delivered/orders', [OrderController::class, 'DeliveredOrders'])->name('delivered-orders');
+    
+    Route::get('/cancel', [OrderController::class, 'CancelOrders'])->name('cancel-orders');
+
+    Route::get('/pending/confirm/{id}', [OrderController::class, 'PendingToConfirm'])->name('pending-confirm');
+
+    Route::get('/confirm/processing/{order_id}', [OrderController::class, 'ConfirmToProcessing'])->name('confirm.processing');
+
+Route::get('/processing/picked/{order_id}', [OrderController::class, 'ProcessingToPicked'])->name('processing.picked');
+
+Route::get('/picked/shipped/{order_id}', [OrderController::class, 'PickedToShipped'])->name('picked.shipped');
+
+Route::get('/shipped/delivered/{order_id}', [OrderController::class, 'ShippedToDelivered'])->name('shipped.delivered');
+
+Route::get('/invoice/download/{order_id}', [OrderController::class, 'AdminInvoiceDownload'])->name('invoice.download');
+
+Route::post('/return/order/{order_id}', [AllUserController::class, 'ReturnOrder'])->name('return.order');
+
+Route::get('/return/order/list', [AllUserController::class, 'ReturnOrderList'])->name('return.order.list');
+
+
+Route::get('/cancel/orders', [AllUserController::class, 'CancelOrders'])->name('cancel.orders');
+});
+
+
+
+Route::prefix('reports')->group(function(){
+    Route::get('/view',[ReportController::class,'AllReports'])->name('all-reports');
+ 
+    Route::post('/search/by-date',[ReportController::class,'ReportByDate'])->name('search-by-date');
+
+    Route::post('/search/by-month',[ReportController::class,'ReportByMonth'])->name('search-by-month');
+
+    Route::post('/search/by-year',[ReportController::class,'ReportByYear'])->name('search-by-year');
+
+
+
+
+});
+
+Route::prefix('alluser')->group(function(){
+    Route::get('/view',[AdminProfileController::class,'AllUsers'])->name('all-users');
+  
+});
+
+
+Route::prefix('blog')->group(function(){
+    Route::get('/category',[BlogController::class,'BlogCategory'])->name('blog.category');
+ 
+    Route::post('/store',[BlogController::class,'BlogCategoryStore'])->name('blogcategory.store');
+
+    Route::get('/category/edit/{id}',[BlogController::class,'BlogCategoryEdit'])->name('blogcategory.edit');
+
+    Route::post('/category/update/{id}',[BlogController::class,'BlogCategoryUpdate'])->name('blogcategory.update');
+
+    Route::get('/category/delete/{id}',[BlogController::class,'BlogCategoryDelete'])->name('blogcategory.delete');
+
+
+    Route::post('/post/store',[BlogController::class,'PostStore'])->name('post-store');
+
+    Route::get('/list/post', [BlogController::class, 'ListBlogPost'])->name('list.post');
+
+Route::get('/add/post', [BlogController::class, 'AddBlogPost'])->name('add.post');
+
+Route::get('/post/delete/{id}',[BlogController::class,'PostDelete'])->name('post.delete');
+
+});
+
+Route::get('/blog', [HomeBlogController::class, 'AddBlogPost'])->name('home.blog');
+
+Route::get('/post/details/{id}', [HomeBlogController::class, 'DetailsBlogPost'])->name('post.details');
+
+Route::get('/blog/category/post/{category_id}', [HomeBlogController::class, 'HomeBlogCatPost']);
+
+
+Route::prefix('setting')->group(function(){
+    Route::get('/site',[SiteSettingController::class,'SetSite'])->name('site.setting');
+ 
+    Route::post('/site/update/{id}',[SiteSettingController::class,'UpdateSiteSetting'])->name('update.sitesetting');
+
+    Route::get('/seo',[SiteSettingController::class,'SeoSetting'])->name('seo.setting');
+
+    Route::post('/seo/update/{id}',[SiteSettingController::class,'UpdateSEO'])->name('update.seo');
+
+});

@@ -13,12 +13,14 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\SubCategory;
 use App\Models\SubSubCategory;
 use App\Models\Product;
+use App\Models\BlogPost;
 
 use App\Models\Brand;
 
 class IndexController extends Controller
 {
     public function index(){
+        $blogpost = BlogPost::latest()->get();
         $products = Product::where('status',1)->orderBy('id','DESC')->limit(5)->get();
         $featured = Product::where('featured',1)->orderBy('id','DESC')->limit(5)->get();
         $hot_deals = Product::where('hot_deals',1)->where('discount_price','!=',NULL)->orderBy('id','DESC')->limit(3)->get();
@@ -43,7 +45,7 @@ class IndexController extends Controller
         //die();
 
 
-        return view('frontend.index',compact('categories','sliders','products','featured','hot_deals','special','special_d','skip_cat_0','skip_prod_0','skip_cat_1','skip_prod_1','skip_brand_0','skip_brand_prod_0'));
+        return view('frontend.index',compact('categories','sliders','products','featured','hot_deals','special','special_d','skip_cat_0','skip_prod_0','skip_cat_1','skip_prod_1','skip_brand_0','skip_brand_prod_0','blogpost'));
     }
 
     public function UserLogout(){
