@@ -155,6 +155,10 @@
                 <label for="">Price</label>
             </td>
 
+            <td class="col-md-1">
+                  <label for=""> Download </label>
+                </td>
+
         </tr>
 
 @foreach($order_item as $item)
@@ -191,6 +195,25 @@
 <label for="">${{$item->price}} ({{$item->price*$item->qty}})</label>
 </td>
 
+@php 
+$file = App\Models\Product::where('id',$item->product_id)->first();
+@endphp
+
+             <td class="col-md-1">
+              @if($order->status == 'pending')  
+              <strong>
+ <span class="badge badge-pill badge-success" style="background: #418DB9;"> No File</span>  </strong> 
+
+              @elseif($order->status == 'confirm')  
+
+<a target="_blank" href="{{ asset('upload/pdf/'.$file->digital_file) }}">  
+  <strong>
+ <span class="badge badge-pill badge-success" style="background: #FF0000;"> Download Ready</span>  </strong> </a> 
+              @endif
+
+
+                </td>
+
 
 
 
@@ -225,7 +248,7 @@
 </div>
 
 
-<button type="submit" class="btn btn-danger">Submit</button>
+<button type="submit" class="btn btn-danger">Order return</button>
 
 </form>
 

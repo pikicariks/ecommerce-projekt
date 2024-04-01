@@ -52,11 +52,11 @@ class CategoryController extends Controller
         
     
             Category::findOrFail($category_id)->update([
-                'brand_name_en' => $req->category_name_en,
-                'brand_name_hin' => $req->category_name_hin,
-                'brand_slug_en' => strtolower(str_replace(' ','-',$req->category_name_en)),
-                'brand_slug_hin' => str_replace(' ','-',$req->category_name_hin),
-                'brand_image' => $req->category_icon,
+                'category_name_en' => $req->category_name_en,
+                'category_name_hin' => $req->category_name_hin,
+                'category_slug_en' => strtolower(str_replace(' ','-',$req->category_name_en)),
+                'category_slug_hin' => str_replace(' ','-',$req->category_name_hin),
+                'category_icon' => $req->category_icon,
             ]);
     
             return redirect()->route('all.category');
@@ -67,7 +67,7 @@ class CategoryController extends Controller
 
     public function CategoryDelete($id){
 
-        $category = Category::findOrFail($id);
+        
         
         
 

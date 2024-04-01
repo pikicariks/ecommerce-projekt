@@ -26,6 +26,17 @@ class ProductController extends Controller
 
     public function StoreProduct(Request $req){
 
+
+        $req->validate([
+            'file' => 'required|mimes:jpeg,png,jpg,zip,pdf|max:2048',
+          ]);
+      
+          if ($files = $req->file('file')) {
+            $destinationPath = 'upload/pdf'; // upload path
+            $digitalItem = date('YmdHis') . "." . $files->getClientOriginalExtension();
+            $files->move($destinationPath,$digitalItem);
+          }
+
         $image = $req->file('product_thumbnail');
         $namegenerate = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
         Image::make($image)->resize(917,1000)->save('upload/product/thumbnail/'.$namegenerate);
@@ -58,6 +69,7 @@ class ProductController extends Controller
             'special_offer' => $req->special_offer,
             'special_deals' => $req->special_deals,
             'product_thumbnail' => $save,
+            'digital_file' => $digitalItem,
             'status' => 1,
             'created_at' => Carbon::now(),
             
@@ -226,5 +238,10 @@ class ProductController extends Controller
    
            return redirect()->route('manage-product');
    
+        }
+
+        public function ProdStock(){
+            $products = Product::latest()->get();
+            return view('backend.product.product_stock',compact('products'));
         }
 }

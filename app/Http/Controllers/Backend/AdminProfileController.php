@@ -13,19 +13,22 @@ class AdminProfileController extends Controller
 {
     
     public function AdminProfile(){
-        $addata = Admin::find(1);
+        $id = Auth::user()->id;
+        $addata = Admin::find($id);
 
         return view('admin.admin_profile_view',compact('addata'));
     }
 
     public function AdminProfileEdit(){
-        $editdata = Admin::find(1);
+        $id = Auth::user()->id;
+        $editdata = Admin::find($id);
 
         return view('admin.admin_profile_edit',compact('editdata'));
     }
 
     public function AdminProfileStore(Request $req){
-        $data = Admin::find(1);
+        $id = Auth::user()->id;
+        $data = Admin::find($id);
         $data->name = $req->name;
         $data->email = $req->email;
         
@@ -51,9 +54,9 @@ class AdminProfileController extends Controller
             'password'=>'required|confirmed',
 
         ]);
-        $hashedPass = Admin::find(1)->password;
+        $hashedPass = Auth::user()->password;
         if(Hash::check($req->oldpassword,$hashedPass)){
-            $admin = Admin::find(1);
+            $admin = Admin::find(Auth::id());
             $admin->password = Hash::make($req->password);
             $admin->save();
             Auth::logout();

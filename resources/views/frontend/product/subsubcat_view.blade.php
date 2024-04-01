@@ -12,7 +12,17 @@ SubSubCategory Products
     <div class="breadcrumb-inner">
       <ul class="list-inline list-unstyled">
         <li><a href="#">Home</a></li>
-        <li class='active'>Handbags</li>
+        @foreach($breadsubsubcat as $item)
+        <li class='active'>{{ $item->category->category_name_en }}</li>
+        @endforeach
+
+        @foreach($breadsubsubcat as $item)
+        <li class='active'>{{ $item->subcategory->subcategory_name_en }}</li>
+        @endforeach
+
+         @foreach($breadsubsubcat as $item)
+        <li class='active'>{{ $item->subsubcategory_name_en }}</li>
+        @endforeach
       </ul>
     </div>
     <!-- /.breadcrumb-inner --> 
@@ -187,7 +197,21 @@ SubSubCategory Products
           </div>
         </div>
         
-     
+        @foreach($breadsubsubcat as $item)
+
+<span class="badge badge-danger" style="background: #808080">{{ $item->category->category_name_en }} </span>
+
+       @endforeach
+
+       @foreach($breadsubsubcat as $item)
+
+<span class="badge badge-danger" style="background: #808080">{{ $item->subcategory->subcategory_name_en }} </span>
+       @endforeach
+
+        @foreach($breadsubsubcat as $item)
+
+ <span class="badge badge-danger" style="background: #FF0000">{{ $item->subsubcategory_name_en }} </span>
+       @endforeach
         <div class="clearfix filters-container m-t-10">
           <div class="row">
             <div class="col col-sm-6 col-md-2">

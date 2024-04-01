@@ -188,6 +188,7 @@
             $('select[name="color"]').empty();
             $.each(data.color,function(key,value){
                 $('select[name="color"]').append(' <option value="'+value+'">'+value+'  </option>');
+                
             });
             $('select[name="size"]').empty();
             $.each(data.size,function(key,value){
@@ -211,8 +212,9 @@ function addToCart(){
   var product_name = $('#pname').text();
   var id = $('#product_id').val();
 
-  var color = $('#color option:selected').text();
-  var size = $('#size option:selected').text();
+  var color = $('select[name="color"] option:selected').text();
+  var size = $('select[name="size"] option:selected').text();
+
 
   var qty = $('#qty').val();
   $.ajax({
@@ -570,6 +572,8 @@ $.ajax({
     })
   }
 </script>
+
+
 
 </body>
 </html>

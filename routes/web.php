@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Backend\AdminProfileController;
+use App\Http\Controllers\Backend\AdminUserController;
 use App\Http\Controllers\Backend\BlogController;
 use App\Http\Controllers\Frontend\IndexController;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +27,9 @@ use App\Http\Controllers\User\AllUserController;
 use App\Http\Controllers\User\CashController;
 use App\Http\Controllers\Frontend\HomeBlogController;
 use App\Http\Controllers\Backend\SiteSetting as SiteSettingController;
-
+use App\Http\Controllers\Backend\ReturnController;
+use App\Http\Controllers\User\ReviewController;
+use App\Http\Controllers\Frontend\ShopController;
 /*u
 |--------------------------------------------------------------------------
 | Web Routes
@@ -212,7 +215,9 @@ Route::get('/my/orders', [AllUserController::class, 'GetOrders'])->name('my.orde
 Route::get('/order_details/{id}', [AllUserController::class, 'OrderDetails']);
 
 Route::get('/invoice_download/{id}', [AllUserController::class, 'InvoiceDownload']);
+////////////////////////////////////
 
+Route::post('/order/tracking', [AllUserController::class, 'OrderTracking'])->name('order.tracking');
 
 });
 
@@ -342,7 +347,7 @@ Route::prefix('alluser')->group(function(){
   
 });
 
-
+////////////////////////////////
 Route::prefix('blog')->group(function(){
     Route::get('/category',[BlogController::class,'BlogCategory'])->name('blog.category');
  
@@ -364,14 +369,14 @@ Route::get('/add/post', [BlogController::class, 'AddBlogPost'])->name('add.post'
 Route::get('/post/delete/{id}',[BlogController::class,'PostDelete'])->name('post.delete');
 
 });
-
+//////////////////////////////
 Route::get('/blog', [HomeBlogController::class, 'AddBlogPost'])->name('home.blog');
 
 Route::get('/post/details/{id}', [HomeBlogController::class, 'DetailsBlogPost'])->name('post.details');
 
 Route::get('/blog/category/post/{category_id}', [HomeBlogController::class, 'HomeBlogCatPost']);
 
-
+/////////////////////////////////////////
 Route::prefix('setting')->group(function(){
     Route::get('/site',[SiteSettingController::class,'SetSite'])->name('site.setting');
  
@@ -382,3 +387,76 @@ Route::prefix('setting')->group(function(){
     Route::post('/seo/update/{id}',[SiteSettingController::class,'UpdateSEO'])->name('update.seo');
 
 });
+
+////////////////////
+Route::prefix('return')->group(function(){
+
+    Route::get('/admin/request', [ReturnController::class, 'ReturnRequest'])->name('return.request');
+    
+    Route::get('/admin/return/approve/{order_id}', [ReturnController::class, 'ReturnRequestApprove'])->name('return.approve');
+
+    Route::get('/admin/all/request', [ReturnController::class, 'ReturnAllRequest'])->name('all.request');
+    });
+
+
+
+
+
+///////////////
+
+Route::post('/review/store', [ReviewController::class, 'ReviewStore'])->name('review.store');
+
+//////////////////////
+
+Route::prefix('review')->group(function(){
+
+    Route::get('/pending', [ReviewController::class, 'PendingReview'])->name('pending.review');
+    
+    Route::get('/admin/approve/{id}', [ReviewController::class, 'ReviewApprove'])->name('review.approve');
+
+
+    Route::get('/published', [ReviewController::class, 'PublishReviews'])->name('publish.review');
+
+
+    Route::get('/delete/{id}', [ReviewController::class, 'DeleteReview'])->name('delete.review');
+    });
+
+
+Route::prefix('stock')->group(function(){
+
+    Route::get('/product', [ProductController::class, 'ProdStock'])->name('product.stock');
+    
+});
+
+
+Route::prefix('adminuserrole')->group(function(){
+
+    Route::get('/all', [AdminUserController::class, 'AllAdminRole'])->name('all.admin.user');
+    
+    Route::get('/add', [AdminUserController::class, 'AddAdminRole'])->name('add.admin');
+
+    Route::post('/store', [AdminUserController::class, 'StoreAdminRole'])->name('admin.user.store');
+
+    Route::get('/edit/{id}', [AdminUserController::class, 'EditAdminRole'])->name('edit.admin.user');
+
+
+    Route::post('/update', [AdminUserController::class, 'UpdateAdminRole'])->name('admin.user.update');
+
+    Route::get('/delete/{id}', [AdminUserController::class, 'DeleteAdminRole'])->name('delete.admin.user');
+
+});
+
+Route::post('/search', [IndexController::class, 'ProductSearch'])->name('product.search');
+///////////
+
+Route::post('search-product', [IndexController::class, 'SearchProduct']);
+
+
+
+///
+
+Route::get('/shop', [ShopController::class, 'ShopPage'])->name('shop.page');
+
+Route::post('/shop/filter', [ShopController::class, 'ShopFilter'])->name('shop.filter');
+
+

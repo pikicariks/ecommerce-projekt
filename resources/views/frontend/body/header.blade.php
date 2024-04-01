@@ -23,6 +23,10 @@
 
             </a></li>
 
+            <li><a href="" type="button" data-toggle="modal" data-target="#ordertracking"><i class="icon fa fa-check"></i>
+Order tracking
+            </a></li>
+
             @auth
             <li><a href="{{route('login')}}"><i class="icon fa fa-user"></i>User profile</a></li>
             @else
@@ -74,6 +78,7 @@
 
         @php
             $setting = App\Models\SiteSett::find(1);
+            $cats = App\Models\Category::get();
         @endphp
           <!-- ============================================================= LOGO ============================================================= -->
           <div class="logo"> <a href="{{url('/')}}"> <img src="{{asset($setting->logo)}}" alt="logo"> </a> </div>
@@ -85,22 +90,23 @@
           <!-- /.contact-row --> 
           <!-- ============================================================= SEARCH AREA ============================================================= -->
           <div class="search-area">
-            <form>
+            <form method="post" action="{{route('product.search')}}">
+              @csrf
               <div class="control-group">
                 <ul class="categories-filter animate-dropdown">
                   <li class="dropdown"> <a class="dropdown-toggle"  data-toggle="dropdown" href="category.html">Categories <b class="caret"></b></a>
                     <ul class="dropdown-menu" role="menu" >
-                      <li class="menu-header">Computer</li>
-                      <li role="presentation"><a role="menuitem" tabindex="-1" href="category.html">- Clothing</a></li>
-                      <li role="presentation"><a role="menuitem" tabindex="-1" href="category.html">- Electronics</a></li>
-                      <li role="presentation"><a role="menuitem" tabindex="-1" href="category.html">- Shoes</a></li>
-                      <li role="presentation"><a role="menuitem" tabindex="-1" href="category.html">- Watches</a></li>
+                     @foreach($cats as $cat)
+                      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">{{$cat->category_name_en}}</a></li>
+                     @endforeach
                     </ul>
                   </li>
                 </ul>
-                <input class="search-field" placeholder="Search here..." />
-                <a class="search-button" href="#" ></a> </div>
+                <input class="search-field" onfocus="search_result_show()" onblur="search_result_hide()" id="search" placeholder="Search here..." />
+                <button class="search-button" type="submit"></button> </div>
             </form>
+
+            <div id="searchProducts"></div>
           </div>
           <!-- /.search-area --> 
           <!-- ============================================================= SEARCH AREA : END ============================================================= --> </div>
@@ -222,6 +228,8 @@
                   </ul>
                 </li>
                 @endforeach
+
+                <li> <a href="{{ route('shop.page') }}">Shop</a> </li>
                 <li class="dropdown  navbar-right special-menu"> <a href="#">Todays offer</a> </li>
 
                 <li class="dropdown  navbar-right special-menu"> <a href="{{ route('home.blog') }}">Blog</a> </li>
@@ -244,4 +252,62 @@
   <!-- /.header-nav --> 
   <!-- ============================================== NAVBAR : END ============================================== --> 
   
+
+
+  <div class="modal fade" id="ordertracking" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Tracking Order</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+      <form action="{{route('order.tracking')}}" method="post">
+@csrf
+<div class="modal-body">
+  <label for="">Invoice Code</label>
+  <input type="text" name="code" required class="form-control" placeholder="Your order invoice no">
+</div>
+
+<button class="btn btn-danger" type="submit" style="margin-left: 17px;">Track Now</button>
+
+      </form>
+
+
+      </div>
+      
+    </div>
+  </div>
+</div>
+
 </header>
+
+<style>
+  
+.search-area{
+  position: relative;
+}
+  #searchProducts {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #ffffff;
+    z-index: 999;
+    border-radius: 8px;
+    margin-top: 5px;
+  }
+</style>
+
+<script>
+  function search_result_hide(){
+    $("#searchProducts").slideUp();
+  }
+   function search_result_show(){
+      $("#searchProducts").slideDown();
+  }
+
+</script> 
